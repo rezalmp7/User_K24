@@ -23,6 +23,9 @@ Route::get('/', function () {
 
 Route::get('login', [LoginController::class, 'index']);
 Route::post('login', [LoginController::class, 'auth']);
+Route::get('logout', [LoginController::class, 'logout']);
 
-Route::get('dashboard', [DashboardController::class, 'index']);
-Route::resource('user', UsersController::class);
+Route::middleware(['auth', 'user-access:user|admin'])->group(function () {
+    Route::get('dashboard', [DashboardController::class, 'index']);
+    Route::resource('/users', UsersController::class);
+});

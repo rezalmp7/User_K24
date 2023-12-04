@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -18,18 +20,23 @@ class LoginController extends Controller
         if(Auth::attempt($credentials))
         {
             $request->session()->regenerate();
-            // if(Auth::user()->role == 'admin') {
-            //     return redirect(url('/dashboard'))
-            //         ->withSuccess('You have successfully logged in!');
-            // } else {
-            //     return redirect(url('/listEvent'))
-            //         ->withSuccess('You have successfully logged in!');
-            // }
-            return redirect(url('/dashboard'));
+            if(Auth::user()->role == 'admin') {
+                return redirect(url('/users'))
+                    ->withSuccess('You have successfully logged in!');
+            } else {
+                return redirect(url('/users'))
+                    ->withSuccess('You have successfully logged in!');
+            }
         }
 
         return back()->withErrors([
             'email' => 'Your provided credentials do not match in our records.',
         ])->onlyInput('email');
+    }
+
+    public function logout() {
+        Auth::logout();
+
+        return redirect(url('/login'));
     }
 }
